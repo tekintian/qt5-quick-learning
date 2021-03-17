@@ -1,5 +1,56 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>images/01.jpeg</file>
+        <file>ColorText.qml</file>
+        <file>ItemsDemo.qml</file>
+        <file>images/open.png</file>
+        <file>images/blueFingerprint.png</file>
+        <file>images/123.jpeg</file>
+        <file>images/ip.png</file>
+        <file>ColumnDemo.qml</file>
+        <file>RowDemo.qml</file>
+        <file>GirdDemo.qml</file>
+        <file>FlowDemo.qml</file>
+        <file>PositionerDemo.qml</file>
+        <file>ColumnLayoutDemo.qml</file>
+        <file>StackLayoutDemo.qml</file>
+        <file>FontDemo.qml</file>
+        <file>TextInputDemo.qml</file>
+        <file>SquareButton.qml</file>
+        <file>LabelMoveDemo.qml</file>
+        <file>RepeaterDemo.qml</file>
+        <file>TextDemo.qml</file>
+        <file>MouseAreaDemo.qml</file>
+        <file>DragDemo.qml</file>
+        <file>KeysDemo.qml</file>
+        <file>KeyNavigationDemo.qml</file>
+        <file>MyWidget.qml</file>
+        <file>MyTimer.qml</file>
+        <file>MyItem.qml</file>
+        <file>MyLoader.qml</file>
+        <file>KeyReader.qml</file>
+        <file>MyGradient.qml</file>
+        <file>MyImage.qml</file>
+        <file>images/colors.png</file>
+        <file>MyAnimation.qml</file>
+        <file>images/animation2.gif</file>
+        <file>images/animation.gif</file>
+        <file>MyScale.qml</file>
+        <file>MyAnimation2.qml</file>
+        <file>MyDataModel.qml</file>
+        <file>ContactModel.qml</file>
+        <file>images/AddressBook_48.png</file>
+        <file>images/AudioPlayer_48.png</file>
+        <file>images/Camera_48.png</file>
+        <file>images/DateBook_48.png</file>
+        <file>images/EMail_48.png</file>
+        <file>images/TodoList_48.png</file>
+        <file>images/VideoPlayer_48.png</file>
+        <file>MyGridView.qml</file>
+        <file>MyPathView.qml</file>
+        <file>MyListModelData.qml</file>
+        <file>MyWebView.qml</file>
+        <file>MyTransitions.qml</file>
     </qresource>
 </RCC>

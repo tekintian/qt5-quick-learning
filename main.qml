@@ -5,41 +5,127 @@ import QtQuick.Window 2.2
 /* QML文档可以看做是一个QML对象树,这里创建了Window根对象
 和它的子对象Text */
 Window {
-    width: 640
-    height: 480
+    width: 1024
+    height: 768
     visible: true
-    title: qsTr("Hello World")
-
-    Text {
-        id: myDemo
-        text: qsTr("<h1>Hello World! QT5 Quick!</h1>")
-        anchors.centerIn: parent // 将Text对象锚定到父对象的中间
+    title: qsTr("Hello World, QT Quick Demo Project")
+/*
+    //背景图片设置
+    Image {
+        id: bgImg
+//        source: "/images/01.jpeg"
+        width: parent.width
+        anchors.bottom: parent.bottom
+        fillMode: Image.PreserveAspectFit
+        // fillMode: Image.PreserveAspectCrop
     }
 
-    Rectangle {
-        id: colorRect
-        width: 100
-        height: width //属性绑定，当 width 的值改变时，height 属性的值会跟随变化
-        radius: 10
-        color: "green"
+    ColorText {
+        colorText: qsTr("Hello World! QT Quick!") //给自定义属性赋值
+        textFont.underline: true //为属性别名赋值
 
-        anchors.left: myDemo.right
+        anchors.centerIn:  parent
 
-        anchors.leftMargin: 10
-        anchors.verticalCenter: myDemo.verticalCenter
-
-        //在QML中一个很常见的设置交互的方式是使用MouseArea，
-        //MouseArea本身是不可见的，但是它可以为一些可见内容提供鼠标交互
-        MouseArea {
-            anchors.fill: parent //表明让MouseArea填充整个父对象
-            onClicked: {
-                //在QML中一般使用console将需要的信息输出到控制台，
-                //可用的有console.log, console.debug, console.info, console.warn 和 console.error，
-                //比如这里使用了console.debug("colorRect: ", parent.color) ，可以顺序输出参数中的内容，可以是字符串，也可以是对象属性引用。
-             console.debug("colorRect:", parent.color)
+        onClicked: {
+            console.log("colorButton:", buttonColor)
+            var val = buttonColor
+            switch(val) {
+                case "#ff0000":
+                    bgImg.source = "images/bg2.png";
+                    changeDuration(500)
+                    break;
+                case "#0000ff":
+                    bgImg.source = "images/bg3.png";
+                    changeDuration(1000)
+                    break;
+                default:
+                    bgImg.source = "images/01.jpeg";
+                    changeDuration(2000)
             }
+            //调用自定义方法更改动画持续时间
+
+
+        }
+
+        //ColorText启动完成时执行代码
+        // 每一个QML对象类型都包含一个附加的 Component 属性，在对象被实例化完成后该属性会发射completed信号，
+        //其对应的onCompleted 处理器会在QML环境完全建立以后执行。
+        // 所以，我们想要在程序启动后执行一些操作，可以放到 Component.onCompleted 中执行。
+        Component.onCompleted: {
+            changeDuration(2000);
+        }
+
+    }
+*/
+
+//    ItemsDemo { }
+
+//    ColumnDemo{}
+//    RowDemo{}
+//    GirdDemo{}
+//    FlowDemo{}
+//    PositionerDemo{}
+//    ColumnLayoutDemo{}
+//    StackLayoutDemo{}
+//    FontDemo{}
+//    TextInputDemo{}
+
+//    SquareButton {
+//        // 信号处理
+//        onActivated: console.log("Activated at " + xPosition + "," + yPosition)
+//        onDeactivated: console.log("Deactivated!")
+//    }
+
+//    LabelMoveDemo{}
+//    RepeaterDemo{}
+//    TextDemo{}
+//    MouseAreaDemo{}
+//    DragDemo{}
+//    KeysDemo{}
+//    KeyNavigationDemo{}
+
+//     Column{
+//         anchors.centerIn: parent; spacing: 10
+
+//        MyWidget { focus: true; color: "lightblue"}
+//        MyWidget {color: "palegreen"}
+//     }
+//    MyTimer{}
+
+/*
+    //Receiving Signals from Loaded Objects
+    Loader{
+        id: myLoader
+        source: "MyItem.qml"
+    }
+    Connections {
+        target: myLoader.item
+        // 处理自定义信号  signal message(string msg)
+        onMessage:{
+            console.log(msg);
+            showMsg.text = msg;
         }
     }
 
+    Text {
+        id: showMsg
+        anchors.centerIn: parent
+        text: qsTr("message")
+        font.pointSize: 18
+        color: "red"
+    }
+ */
 
+//    MyLoader{}
+//    MyGradient{}
+//    MyImage{}
+//    MyAnimation{}
+//    MyScale{}
+//    MyAnimation2{}
+//    MyDataModel{}
+//    MyGridView{}
+//    MyPathView{}
+//    MyWebView{}
+    MyTransitions{}
 }
+
