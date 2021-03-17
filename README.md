@@ -146,7 +146,7 @@ Qt Quick提供了一个拥有 z 排序的二维可视画布，它包含两个坐
 
 ## 定位器
 
-定位器是一个容器项目，**可以用来为多个项目进行常规的布局**。包括Column 、 Row、 Grid 和 Flow。
+定位器是一个容器项目，**可以用来为多个项目进行常规的布局**。包括Column 、 Row、 Grid 和 Flow。  Positioner
 
  
 
@@ -170,6 +170,30 @@ Qt Quick提供了一个拥有 z 排序的二维可视画布，它包含两个坐
 - font.underline：是否有下划线，取值为true或false
 - font.weight：字体重量，取值为Font.Thin、Font.Light、Font.ExtraLight、Font.Normal（默认）、Font.Medium、Font.DemiBold、Font.Bold、Font.ExtraBold 和 Font.Black
 - font.wordSpacing：单词间距，正值加大间距，负值减小间距
+
+## Color
+
+color可以用以下几种方式表示：
+
+（1）SVG颜色名
+
+（2）”#RRGGBB”格式的十六进制（不带透明度）
+
+（3）”#AARRGGBB”格式的十六进制（AA表示透明度）00~FF表示透明度，00代表完全透明，FF表示完全不透明
+
+这里需要注意#8个0表示的是透明颜色:  #00000000 
+
+
+
+![img](https://doc.qt.io/qt-5/images/declarative-colors.png)
+
+
+
+详情见: https://doc.qt.io/qt-5/qml-color.html#svg-color-reference
+
+
+
+
 
 ## 文本裁剪
 
@@ -362,4 +386,477 @@ Window {
 ~~~
 
 运行代码可以看到，TextEdit没有提供滚动条、光标跟随和其它在可视部件中通常具有的行为。为了更加人性化的体验，我们可以使用 `Flickable` 来为其提供滚动，实现光标跟随。下面来看一段示例代码：
+
+## Models and Views in Qt Quick
+
+- ListModel
+
+ 
+
+The ListModel is a simple container of ListElement definitions, each containing data roles. The contents can be defined dynamically, or explicitly in QML.
+
+The number of elements in the model can be obtained from its count property. A number of familiar methods are also provided to manipulate the contents of the model, including append(), insert(), move(), remove() and set(). These methods accept dictionaries as their arguments; these are translated to ListElement objects by the model.
+
+Elements can be manipulated via the model using the setProperty() method, which allows the roles of the specified element to be set and changed.
+
+ 
+
+- ListView
+
+A ListView displays data from models created from built-in QML types like ListModel and XmlListModel, or custom model classes defined in C++ that inherit from QAbstractItemModel or QAbstractListModel.
+
+A ListView has a model, which defines the data to be displayed, and a delegate, which defines how the data should be displayed. Items in a ListView are laid out horizontally or vertically. List views are inherently flickable because ListView inherits from Flickable.
+
+ 
+
+- Component
+
+Components are reusable, encapsulated QML types with well-defined interfaces.
+
+Components are often defined by component files - that is, .qml files. The Component type essentially allows QML components to be defined inline, within a QML document, rather than as a separate QML file. This may be useful for reusing a small component within a QML file, or for defining a component that logically belongs with other QML components within a file.
+
+ ~~~cpp
+import QtQuick 2.0
+
+Item {
+    width:200;height: 250;
+
+    // 模型数据
+    ListModel {
+        id:myModel
+        ListElement{type:"dog"; age:9; address:"云南"}
+        ListElement{type:"cat"; age:6; address:"北京"}
+    }
+    // 显示模板
+    Component {
+        id: myDelegate
+        Text{ text: type + ", "+ age +" "+ address; font.pointSize: 16; }
+    }
+    //显示视图
+    ListView {
+        anchors.fill: parent
+        model: myModel
+        delegate: myDelegate
+    }
+}
+
+ ~~~
+
+
+
+## Flickable
+
+The Flickable item places its children on a surface that can be dragged and flicked, causing the view onto the child items to scroll. This behavior forms the basis of Items that are designed to show large numbers of child items, such as ListView and GridView.
+
+In traditional user interfaces, views can be scrolled using standard controls, such as scroll bars and arrow buttons. In some situations, it is also possible to drag the view directly by pressing and holding a mouse button while moving the cursor. In touch-based user interfaces, this dragging action is often complemented with a flicking action, where scrolling continues after the user has stopped touching the view.
+
+Flickable does not automatically clip its contents. If it is not used as a full-screen item, you should consider setting the clip property to true.
+
+~~~cpp
+Flickable {
+      id: flick
+
+      width: 300; height: 200;
+      contentWidth: edit.paintedWidth
+      contentHeight: edit.paintedHeight
+      clip: true
+
+      function ensureVisible(r)
+      {
+          if (contentX >= r.x)
+              contentX = r.x;
+          else if (contentX+width <= r.x+r.width)
+              contentX = r.x+r.width-width;
+          if (contentY >= r.y)
+              contentY = r.y;
+          else if (contentY+height <= r.y+r.height)
+              contentY = r.y+r.height-height;
+      }
+
+      TextEdit {
+          id: edit
+          width: flick.width
+          focus: true
+          wrapMode: TextEdit.Wrap
+          onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+      }
+  }
+
+
+~~~
+
+## MouseArea
+
+A MouseArea is an invisible item that is typically used in conjunction with a visible item in order to provide mouse handling for that item. By effectively acting as a proxy, the logic for mouse handling can be contained within a MouseArea item.
+
+The enabled property is used to enable and disable mouse handling for the proxied item. When disabled, the mouse area becomes transparent to mouse events.
+
+~~~cpp
+Rectangle {
+     width: 100; height: 100
+     color: "green"
+
+     MouseArea {
+         anchors.fill: parent
+         acceptedButtons: Qt.LeftButton | Qt.RightButton
+         onClicked: {
+             if (mouse.button == Qt.RightButton)
+                 parent.color = 'blue';
+             else
+                 parent.color = 'red';
+         }
+     }
+ }
+
+
+~~~
+
+
+
+## Loader and Connections
+
+**Loader** is used to dynamically load QML components.
+
+ 
+
+Loader can load a QML file (using the source property) or a Component object (using the sourceComponent property). It is useful for delaying the creation of a component until it is required:
+
+~~~cpp
+import QtQuick 2.0
+
+Item {
+  width: 200; height: 200
+  Loader { id: pageLoader }
+  MouseArea {
+   anchors.fill: parent
+   onClicked: pageLoader.source = "Page1.qml"
+  }
+}
+~~~
+
+
+
+If the source or sourceComponent changes, any previously instantiated items are destroyed. Setting source to an empty string or setting sourceComponent to undefined destroys the currently loaded object, freeing resources and leaving the Loader empty.
+
+ 
+
+The loaded object can be accessed using the **item** property.
+
+ item :  This property **holds the top-level object that is currently loaded.** 
+
+Any signals emitted from the loaded object can be received using the Connections type
+
+ To avoid seeing the items loading progressively set visible appropriately, e.g.
+
+ Loader {
+
+   source: "mycomponent.qml"
+
+   asynchronous: true
+
+   visible: status == Loader.Ready
+
+ }
+
+
+
+##**Connections** 
+
+A Connections object creates a connection to a QML signal. 
+
+When connecting to signals in QML, the usual way is to create an "on<Signal>**"** handler that reacts when a signal is received, like this:
+
+ MouseArea {
+
+   onClicked: { foo(parameters) }
+
+ }
+
+However, it is not possible to connect to a signal in this way in some cases, such as when:
+
+Multiple connections to the same signal are required
+
+Creating connections outside the scope of the signal sender
+
+Connecting to targets not defined in QML
+
+When any of these are needed, the Connections type can be used instead.
+
+For example, the above code can be changed to use a Connections object, like this:
+
+ ~~~cpp
+MouseArea {
+   Connections {
+    function onClicked(mouse) { foo(mouse) }
+   }
+ }
+ ~~~
+
+
+
+More generally, the Connections object can be a child of some object other than the sender of the signal:
+
+~~~cpp
+ MouseArea {
+   id: area
+ }
+
+ // ...
+
+ Connections {
+   target: area
+   function onClicked(mouse) { foo(mouse) }
+
+ }
+~~~
+
+
+
+## Gradient 颜色渐变
+
+A gradient is defined by two or more colors, which will be blended seamlessly.
+
+The colors are specified as a set of GradientStop child items, each of which defines a position on the gradient from 0.0 to 1.0 and a color. The position of each GradientStop is defined by setting its position property; its color is defined using its color property.
+
+A gradient without any gradient stops is rendered as a solid white fill.
+
+Note that this item is not a visual representation of a gradient. To display a gradient, use a visual item (like Rectangle) which supports the use of gradients.
+
+~~~cpp
+import QtQuick 2.0
+// 渐变
+Rectangle {
+    width: parent.width; height: parent.height;
+
+    gradient: Gradient{
+        GradientStop{ position: 0.0; color:"red" }
+        GradientStop { position: 0.33; color:"yellow" }
+        GradientStop { position: 1; color: "green" }
+    }
+}
+~~~
+
+
+
+## PathView
+
+A PathView displays data from models created from built-in QML types like ListModel and XmlListModel, or custom model classes defined in C++ that inherit from QAbstractListModel.
+
+The view has a model, which defines the data to be displayed, and a delegate, which defines how the data should be displayed. The delegate is instantiated for each item on the path. The items may be flicked to move them along the path.
+
+~~~cpp
+import QtQuick 2.0
+
+Rectangle {
+    width: 400; height: 240
+    color: "white"
+    // 显示模板 组件
+    Component{
+        id: appDelegate
+        Item {
+            width: 100; height: 100;
+            scale: PathView.iconScale
+
+            Image{
+                id:myIcon
+                y:20; anchors.horizontalCenter: parent.horizontalCenter
+                source: icon
+                smooth: true
+            }
+            Text {
+                text: name
+                smooth: true
+                anchors {top: myIcon.bottom; horizontalCenter: parent.horizontalCenter}
+            }
+        }
+    }
+    //高亮模板组件
+    Component{
+        id:appHighlight
+        Rectangle{ width: 80; height: 80; color:"lightsteelblue"}
+    }
+
+    PathView{
+        id:view
+        anchors.fill: parent
+        highlight: appHighlight
+        preferredHighlightBegin: 0.5
+        preferredHighlightEnd: 0.5
+        focus: true
+
+        //加入按键导航
+        Keys.onLeftPressed: decrementCurrentIndex()
+        Keys.onRightPressed: incrementCurrentIndex()
+
+        model: MyListModelData{}
+        delegate: appDelegate
+        path: Path{
+            startX: 10
+            startY: 50
+            PathAttribute{ name: "iconScale"; value: 0.5 }
+            PathQuad{ x:200; y:150; controlX: 50; controlY: 200 }
+            PathAttribute{ name:"iconScale"; value: 1.0 }
+            PathQuad{x:390; y:50; controlX: 350; controlY: 200 }
+            PathAttribute{name:"iconScale"; value: 0.5 }
+        }
+    }
+}
+
+~~~
+
+
+
+## Rectangle  Transition过度效果演示
+
+~~~cpp
+import QtQuick 2.0
+// 过度效果演示
+Rectangle {
+    id: page
+    width: 360; height: 360; color: "#343434"; radius: 0
+    //设置背景渐变
+    gradient: Gradient {
+        GradientStop { position: 0.00; color: "white"; }
+        GradientStop { position: 1.00; color: "green"; }
+    }
+
+    // 图标设置
+    Image {
+        id: icon
+        x: 10; y: 20
+        source: "images/ip.png"
+    }
+
+    // 分别设置4个Rectangle矩形边框和其坐标
+    Rectangle {
+        id: topLeftRect
+        width: 64; height: 64; radius: 6
+
+        anchors{ left: parent.left; leftMargin: 10; top: parent.top; topMargin: 10}
+
+        color: "#00000000"; // 这里的颜色 #8个0 代表的为透明颜色
+        border.color: "#000000" //边框颜色
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: page.state = ''
+        }
+    }
+
+    Rectangle {
+        id: middleRightRect
+        width: 65; height: 64; radius: 6
+        x: -6 ; y: -6;
+        anchors{right: parent.right;rightMargin: 10;verticalCenter: parent.verticalCenter}
+        color: "#00000000"; border.color: "#000000"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: page.state = 'State1'
+        }
+    }
+
+    Rectangle {
+        id: bottomLeftRect
+        width: 64; height: 65;  radius: 6
+        y: -3
+        anchors{left: parent.left;leftMargin: 10;bottom: parent.bottom;bottomMargin: 20}
+        color: "#00000000"; border.color: "#000000"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: page.state = 'State2'
+        }
+    }
+
+    Rectangle{
+        id: topRightRect
+        height: 65; width: 65; radius: 6;
+        y:10; x: parent.width -100;
+        anchors {right: parent.right; top: parent.top; topMargin: 10; rightMargin: 10}
+
+        color: "#00000000"; // 这里的颜色 #8个0 代表的为透明颜色
+        border.color: "#000000"
+
+        MouseArea{
+            anchors.fill: parent
+            onClicked: page.state = "State3"
+        }
+    }
+
+    //设置状态和其坐标位置
+    states: [
+        State {
+            name: "State1"
+            PropertyChanges {
+                target: icon
+                x: middleRightRect.x
+                y: middleRightRect.y
+            }
+        },
+        State {
+            name: "State2"
+            PropertyChanges {
+                target: icon
+                x: bottomLeftRect.x
+                y: bottomLeftRect.y
+            }
+        },
+        State {
+            name: "State3"
+            PropertyChanges {
+                target: icon
+               x: topRightRect.x
+               y: topRightRect.y
+            }
+        }
+    ]
+    // 过度效果
+    transitions: [
+        Transition {
+            from: "*"; to: "State1"
+            NumberAnimation {
+                easing.type: Easing.OutBounce; // 擦除效果类型  QEasingCurve::Type
+                properties: "x,y";
+                duration: 1000
+            }
+        },
+
+        Transition {
+            from: "*"; to: "State2"
+            NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 2000 }
+        },
+
+        Transition {
+            from: "*"; to: "State3"
+            NumberAnimation { properties: "x,y"; easing.type: Easing.InElastic; duration: 500 }
+        },
+
+        Transition {
+            NumberAnimation { properties: "x,y"; duration: 200 }
+        }
+    ]
+}
+
+~~~
+
+
+
+
+
+## Qt Examples And Tutorials
+
+
+
+https://doc.qt.io/qt-5/qtexamplesandtutorials.html
+
+
+
+Community  Learning::Demos and Examples
+
+https://wiki.qt.io/Category:Learning::Demos_and_Examples
+
+  
+
+All Qt Examples
+
+https://doc.qt.io/qt-5/qtexamples.html
 

@@ -124,8 +124,8 @@ Window {
 //    MyAnimation2{}
 //    MyDataModel{}
 //    MyGridView{}
-//    MyPathView{}
+    MyPathView{}
 //    MyWebView{}
-    MyTransitions{}
+//    MyTransitions{}
 }
 
